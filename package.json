@@ -1,0 +1,20 @@
+{
+  "name": "ramdux",
+  "description": "ramdajs和redux的结合。打造更简单的前端数据流框架。",
+  "version": "0.0.14",
+  "dependencies": {
+    "redux": "3.7.2",
+    "react-dom": "15.5.3",
+    "react": "15.5.3",
+    "ramda": "0.24.1"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
