@@ -1,5 +1,4 @@
 import isPlainObject from 'lodash/isPlainObject'
-import $$observable from 'symbol-observable'
 
 /**
  * These are private action types reserved by Redux.
@@ -146,133 +145,48 @@ export default function createStore(reducer, preloadedState, enhancer) {
    * Note that, if you use a custom middleware, it may wrap `dispatch()` to
    * return something else (for example, a Promise you can await).
    */
-  function dispatch(action) {
-    if (!isPlainObject(action)) {
-      throw new Error(
-        'Actions must be plain objects. ' +
-        'Use custom middleware for async actions.'
-      )
-    }
-
-    if (typeof action.type === 'undefined') {
-      throw new Error(
-        'Actions may not have an undefined "type" property. ' +
-        'Have you misspelled a constant?'
-      )
-    }
-
-    if (isDispatching) {
-      throw new Error('Reducers may not dispatch actions.')
-    }
-
-    try {
-      isDispatching = true
-      currentState = currentReducer(currentState, action)
-    } finally {
-      isDispatching = false
-    }
-
-    const listeners = currentListeners = nextListeners
-    for (let i = 0; i < listeners.length; i++) {
-      const listener = listeners[i]
-      listener()
-    }
-
-    return action
-  }
-
-  function dispatchP(action) {
-    if (!isPlainObject(action)) {
-      throw new Error(
-        'Actions must be plain objects. ' +
-        'Use custom middleware for async actions.'
-      )
-    }
-
-    if (typeof action.type === 'undefined') {
-      throw new Error(
-        'Actions may not have an undefined "type" property. ' +
-        'Have you misspelled a constant?'
-      )
-    }
-
-    if (isDispatching) {
-      throw new Error('Reducers may not dispatch actions.')
-    }
-
-    try {
-      isDispatching = true
-      currentState = currentReducer(currentState, action)
-    } finally {
-      isDispatching = false
-    }
-
-    const listeners = currentListeners = nextListeners
-    for (let i = 0; i < listeners.length; i++) {
-      const listener = listeners[i]
-      listener()
-    }
-
-    return Promise.resolve(currentState);
-  }
-
-  /**
-   * Replaces the reducer currently used by the store to calculate the state.
-   *
-   * You might need this if your app implements code splitting and you want to
-   * load some of the reducers dynamically. You might also need this if you
-   * implement a hot reloading mechanism for Redux.
-   *
-   * @param {Function} nextReducer The reducer for the store to use instead.
-   * @returns {void}
-   */
-  function replaceReducer(nextReducer) {
-    if (typeof nextReducer !== 'function') {
-      throw new Error('Expected the nextReducer to be a function.')
-    }
-
-    currentReducer = nextReducer
-    dispatch({ type: ActionTypes.INIT })
-  }
-
-  /**
-   * Interoperability point for observable/reactive libraries.
-   * @returns {observable} A minimal observable of state changes.
-   * For more information, see the observable proposal:
-   * https://github.com/tc39/proposal-observable
-   */
-  function observable() {
-    const outerSubscribe = subscribe
-    return {
-      /**
-       * The minimal observable subscription method.
-       * @param {Object} observer Any object that can be used as an observer.
-       * The observer object should have a `next` method.
-       * @returns {subscription} An object with an `unsubscribe` method that can
-       * be used to unsubscribe the observable from the store, and prevent further
-       * emission of values from the observable.
-       */
-      subscribe(observer) {
-        if (typeof observer !== 'object') {
-          throw new TypeError('Expected the observer to be an object.')
-        }
-
-        function observeState() {
-          if (observer.next) {
-            observer.next(getState())
-          }
-        }
-
-        observeState()
-        const unsubscribe = outerSubscribe(observeState)
-        return { unsubscribe }
-      },
-
-      [$$observable]() {
-        return this
+  const originDispatch = function (isPromise) {
+    return function (action) {
+      if (!isPlainObject(action)) {
+        throw new Error(
+          'Actions must be plain objects. ' +
+          'Use custom middleware for async actions.'
+        )
       }
+
+      if (typeof action.type === 'undefined') {
+        throw new Error(
+          'Actions may not have an undefined "type" property. ' +
+          'Have you misspelled a constant?'
+        )
+      }
+
+      if (isDispatching) {
+        throw new Error('Reducers may not dispatch actions.')
+      }
+
+      try {
+        isDispatching = true
+        currentState = currentReducer(currentState, action)
+      } finally {
+        isDispatching = false
+      }
+
+      const listeners = currentListeners = nextListeners
+      for (let i = 0; i < listeners.length; i++) {
+        const listener = listeners[i]
+        listener()
+      }
+
+      if(isPromise){
+        return Promise.resolve(currentState)
+      }
+      return action
     }
-  }
+  };
+
+  const dispatch = originDispatch();
+  const dispatchP = originDispatch(true);
 
   // When a store is created, an "INIT" action is dispatched so that every
   // reducer returns their initial state. This effectively populates
@@ -284,7 +198,5 @@ export default function createStore(reducer, preloadedState, enhancer) {
     dispatchP,
     subscribe,
     getState,
-    replaceReducer,
-    [$$observable]: observable
   }
 }

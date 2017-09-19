@@ -8,6 +8,7 @@ ramdux是ramdajs和redux(改造过)的结合。
 进一步弱化`redux的state`作用。  
 `redux的state`只是用来描述`React组件的state`改变的部分。  
 在reducer中，几乎用不到`redux的state`。  
+- `redux的state`经过Promise化。这样保持了同步异步处理的一致性。
 
 # 三大原则
 - 非单一数据源  
@@ -29,7 +30,7 @@ ramdux是ramdajs和redux(改造过)的结合。
 
 
 ```javascript
-import createStore from "./createStore.js";
+import {createStore} from './ramdux/index.js';
 import R from "ramda";
 
 const INCREMENT = function(action){
@@ -71,8 +72,8 @@ export default store;
 并且返回Reducer处理后，并Promise化的数据。  
 
 ```javascript
-import ramdux  from './ramdux.js';
 import React from 'react';
+import {connect} from './ramdux/index.js';
 import store from './store.js';
 
 class ReactComponent extends React.Component {

@@ -4,8 +4,8 @@ const connect = function (listenable, context){
   if (type(listenable) !== 'Object') {
     throw new Error('connect function\'s argument is not a object');
   }
+
   // const originDispatch = listenable.dispatch;
-  const originDispatch = listenable.dispatch;
   const originDispatchP = listenable.dispatchP;
   const originGetState = listenable.getState;
   listenable.trigger = function (obj, fn) {
@@ -33,7 +33,7 @@ const connect = function (listenable, context){
       //   super();
       // }
       componentDidMount(...args) {
-        // 这里的context就是组件的上下文了
+        // 这里的context就是react组件的上下文了
         context = context || this;
         listenable.trigger = listenable.trigger.bind(context);
         listenable.getReactState = listenable.getReactState.bind(context);

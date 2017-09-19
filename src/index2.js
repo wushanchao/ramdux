@@ -1,6 +1,6 @@
 import React from 'react';
-import ramdux  from './ramdux.js';
 import store from './store2.js';
+import {connect} from './ramdux/index.js';
 
 class ReactComponent extends React.Component {
     setData() {
@@ -13,5 +13,5 @@ class ReactComponent extends React.Component {
     }    
 }
 
-const RamduxComponent = ramdux(store)(ReactComponent);
+const RamduxComponent = connect(store)(ReactComponent);
 export default RamduxComponent;

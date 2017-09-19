@@ -1,6 +1,5 @@
-// import {createStore} from "redux";
-import createStore from "./createStore.js";
 import R from "ramda";
+import {createStore} from './ramdux/index.js';
 
 const setTimeout1 = R.curry(function(action) {
   let state = action.state;

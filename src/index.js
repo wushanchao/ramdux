@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ramdux  from './ramdux.js';
+// import ramdux  from './ramdux.js';
 import store from './store.js';
 import Index2 from './index2.js';
+import {connect} from './ramdux/index.js';
+// const {connect} = ramdux;
 
 class ReactComponent extends React.Component {
   constructor(props) {
@@ -55,7 +57,7 @@ class ReactComponent extends React.Component {
       </div>);
   }
 }
-const RamduxComponent = ramdux(store)(ReactComponent);
+const RamduxComponent = connect(store)(ReactComponent);
 
 ReactDOM.render(
   <RamduxComponent />,

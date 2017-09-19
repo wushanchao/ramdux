@@ -1,16 +1,7 @@
-// import {createStore} from "redux";
-import createStore from "./createStore.js";
 import R from "ramda";
+import {createStore} from './ramdux/index.js';
 import store1 from "./store.js";
 
-
-
-const INCREMENT = function(action){
-  let state = action.state;
-  return {
-    value : state.value + 1
-  };
-};
 
 const log = function(action){
   console.log('store2 INCREMENT', action);
