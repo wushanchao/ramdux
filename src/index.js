@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import ramdux  from './ramdux.js';
 import store from './store.js';
 
-class Test extends React.Component {
+class ReactComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -62,11 +62,11 @@ class Test extends React.Component {
       </div>);
   }
 }
-const NewTest = ramdux(store)(Test);
+const RamduxComponent = ramdux(store)(ReactComponent);
 
 ReactDOM.render(
-  <NewTest />,
+  <RamduxComponent />,
   document.getElementById('app')
 )
 
-export default NewTest;
+export default RamduxComponent;
