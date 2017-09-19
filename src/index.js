@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ramdux  from './ramdux.js';
 import store from './store.js';
+import Index2 from './index2.js';
 
 class ReactComponent extends React.Component {
   constructor(props) {
@@ -13,31 +14,23 @@ class ReactComponent extends React.Component {
       otherAsyncing: false,
     };
   }
-  dispatch(obj) {
-    // obj.state = this.state;
-    // store.dispatch(obj);
-  }
   setOtherData() {
     store.dispatch({ type: 'Other' });
   }
   setData() {
-    store.dispatch({ type: 'INCREMENT' });
+   store.dispatch({ type: 'INCREMENT' });
   }
   async() {
     store.dispatch({ type: 'Loading' });
-    store.dispatch({ type: 'ASYNC' });
+    console.log('async',store.dispatch({ type: 'ASYNC' }).then(function(data){console.log('async data', data)}));
   }
   otherAsync(){
     store.dispatch({
       type: 'OtherAsync'
     });
   }
-  componentDidMount() {
-    //store.dispatch({type: 'Init'})    
-  }
   render() {
     const t = this;
-    // console.log('render', store.getState(), t.state);
     const { value, asyncing, otherNum } = t.state;
     return (
       <div>
@@ -57,8 +50,8 @@ class ReactComponent extends React.Component {
         <div>其他数字：{otherNum}</div>
         <div onClick={t.setOtherData.bind(this)}>点我其他数字+1</div>
         <div onClick={t.otherAsync.bind(this)}>点我其他数字异步+10</div>
-        
-
+        <br />
+        <Index2 />
       </div>);
   }
 }

@@ -1,4 +1,5 @@
-import {createStore} from "redux";
+// import {createStore} from "redux";
+import createStore from "./createStore.js";
 import R from "ramda";
 
 const setTimeout1 = R.curry(function(action) {
@@ -76,13 +77,13 @@ function counter(state = {}, action) {
 
 let store = createStore(counter);
 
-store.subscribe(function(action){
+store.subscribe(function(){
   let reduxState = store.getState();
   // 因为不知reduxState是Promise对象或者普通对象，
   // 普通对象其转为Promise对象。本身为Promise对象则不转。
-  Promise.resolve(reduxState).then(function(state){
+  reduxState.then(function(state){
     let reactState = store.getReactState();
-    console.log('Promise.resolve', state, reactState);
+    // console.log('Promise.resolve', state, reactState);
     store.trigger(
       R.merge(reactState, state)
     )

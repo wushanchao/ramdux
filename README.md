@@ -1,5 +1,5 @@
 # ramdux简介
-ramdux是ramdajs和redux的结合。  
+ramdux是ramdajs和redux(改造过)的结合。  
 目标是成为一款编码体验更一致的前端数据流框架。  
 一致体现在:  
 - 修改state的过程函数式化。  
@@ -17,23 +17,19 @@ ramdux是ramdajs和redux的结合。
 - State 是只读的
 - 使用纯函数来执行修改
 
-# Demo演示
-本项目Demo的脚手架采用create-react-app。  
-```
-npm install 
-npm start
-```
 
 # Get Start
 ### 0.创建Store  
 - 在reducer中，我们基本不会用到`redux的state`，而是使用React组件传递过来的`action.state`。  
 `action.state`就是`React组件的state`。  
-- 在`store.subscribe`中，我们对`redux的state`进行了`Promise.resolve`处理。  
 - 新增了`store.getReactState`和`store.trigger`两个方法。  
-一个用来获取组建的state，一个用来对组件进行setState。  
+一个用来获取组件的state，一个用来对组件进行setState。  
+- 改造了`store.getState`。
+返回的是Promise化的`redux的state`。
+
 
 ```javascript
-import {createStore} from "redux";
+import createStore from "./createStore.js";
 import R from "ramda";
 
 const INCREMENT = function(action){
@@ -57,24 +53,22 @@ function counter(state = {}, action) {
 let store = createStore(counter);
 store.subscribe(function(action){
   let reduxState = store.getState();
-  // 因为不知reduxState是Promise对象或者普通对象，
-  // 普通对象其转为Promise对象。本身为Promise对象则不转。
-  Promise.resolve(reduxState).then(function(state){
+  // 返回的是Promise化的`redux的state`
+  reduxState.then(function(state){
     let reactState = store.getReactState();
-    console.log('Promise.resolve', state, reactState);
     store.trigger(
       R.merge(reactState, state)
     )
   });
 });
 
-
 export default store;
 ```
 
 
 ### 1.把store注入React组件  
-修改了`store.dispatch`功能，自动把`组件的state`放入`aciton.state`中。  
+改造了`store.dispatch`功能，自动把`组件的state`放入`aciton.state`中。   
+并且返回Reducer处理后，并Promise化的数据。  
 
 ```javascript
 import ramdux  from './ramdux.js';
@@ -89,7 +83,7 @@ class ReactComponent extends React.Component {
     };
   }
   setData() {
-    store.dispatch({ type: 'INCREMENT' });
+    console.log('dispatch的返回值是一个Promise对象' ,store.dispatch({ type: 'INCREMENT' }));
   }
   render() {
     const t = this;
@@ -106,10 +100,16 @@ const RamduxComponent = ramdux(store)(ReactComponent);
 export default RamduxComponent;
 ```
 
-3. 异步操作可以看demo  
-组件之间的通信，通过引入对方的store，调用其`store.getReactState`获取状态。  
+### 2. 异步操作可以看demo  
+组件之间的通信，通过引入对方的store，调用其`store.dispatch`方法获取返回值即可。  
+因为都做过Promise化处理，同步异步都方便。
+
+# Demo演示
+本项目Demo的脚手架采用create-react-app。  
+```
+npm install 
+npm start
+```
 
 # 待做事项(To Do List)
-- 阅读redux中`createStore`方法的源码。
-- 重写更适合本项目的`createStore`方法。  
-- 探索组件之间更好的通信协议。  
+- 学习借鉴思考

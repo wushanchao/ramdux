@@ -4,7 +4,10 @@ const connect = function (listenable, context){
   if (type(listenable) !== 'Object') {
     throw new Error('connect function\'s argument is not a object');
   }
+  // const originDispatch = listenable.dispatch;
   const originDispatch = listenable.dispatch;
+  const originDispatchP = listenable.dispatchP;
+  const originGetState = listenable.getState;
   listenable.trigger = function (obj, fn) {
     this.setState(obj || {}, fn);
   };
@@ -17,7 +20,11 @@ const connect = function (listenable, context){
       state,
     };
     dispatchObj = merge(dispatchObj, obj);
-    originDispatch(dispatchObj);
+    return originDispatchP(dispatchObj);
+  };
+
+  listenable.getState = function(){
+    return Promise.resolve(originGetState());
   };
 
   return function (otherReactClass) {
@@ -31,11 +38,11 @@ const connect = function (listenable, context){
         listenable.trigger = listenable.trigger.bind(context);
         listenable.getReactState = listenable.getReactState.bind(context);
         listenable.dispatch = listenable.dispatch.bind(context);
-        super.componentDidMount();
+        super.componentDidMount && super.componentDidMount();
       }
       componentWillUnmount() {
         listenable.trigger = null;
-        super.componentWillUnmount();
+        super.componentWillUnmount && super.componentWillUnmount();
       }
 
     }
