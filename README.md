@@ -8,16 +8,23 @@ ramdux是ramdajs和redux(改造过)的结合。
 进一步弱化`redux的state`作用。  
 `redux的state`只是用来描述`React组件的state`改变的部分。  
 在reducer中，几乎用不到`redux的state`。  
-- `redux的state`经过Promise化。这样保持了同步异步处理的一致性。
+- `redux的state`经过Promise化。这样保持了同步异步处理的一致性。   
+也同时废弃掉redux中间套的方案。  
+因为这时store之间可以便捷地组合。    
 
 # 三大原则
 - 非单一数据源  
 世界是混沌的。  
 随着业务的复杂度增加，一个应用一个Store的维护会越来越困难，也越难预测业务行为。  
-所以一个组件一个Store，约定好Store之间的通信协议，组件之间的通信通过Store之间的消息传递即可。   
-- State 是只读的
-- 使用纯函数来执行修改
+所以一个组件一个Store，约定好Store之间的通信协议，组件之间的通信通过Store之间的消息传递即可。 
 
+- State是只读的
+只读，拷贝，重新生成。  
+避免state管理混乱。  
+
+- 使用纯函数来执行修改  
+虽然不好预测整个应用的行为，但是能预测所负责的功能行为。  
+纯函数就是这种预测的最好保障。  
 
 # Get Start
 ### 0.创建Store  
@@ -97,7 +104,7 @@ class ReactComponent extends React.Component {
     )
   }
 }
-const RamduxComponent = ramdux(store)(ReactComponent);
+const RamduxComponent = connect(store)(ReactComponent);
 export default RamduxComponent;
 ```
 
@@ -112,5 +119,13 @@ npm install
 npm start
 ```
 
+# redux所修改的部分
+只使用且修改了`3.7.2版本redux`的`createStore.js`文件。  
+移除掉里面`replaceReducer,observable`相关部分。  
+并修改了dispatch的逻辑，新增了dispatchP方法。  
+形成了这个项目自己的`createStore.js`。  
+
 # 待做事项(To Do List)
-- 学习借鉴思考
+- 学习借鉴思考  
+- 重新优化createStore.js文件  
+- 推广并收集实践case  
