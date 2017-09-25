@@ -1,5 +1,4 @@
-import isPlainObject from 'lodash/isPlainObject'
-
+import { type } from 'ramda';
 /**
  * These are private action types reserved by Redux.
  * For any unknown actions, you must return the current state.
@@ -147,7 +146,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
    */
   const originDispatch = function (isPromise) {
     return function (action) {
-      if (!isPlainObject(action)) {
+      if (type(action) !== "Object") {
         throw new Error(
           'Actions must be plain objects. ' +
           'Use custom middleware for async actions.'
