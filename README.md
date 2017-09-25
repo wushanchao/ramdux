@@ -113,11 +113,7 @@ export default RamduxComponent;
 因为都做过Promise化处理，同步异步都方便。
 
 # Demo演示
-本项目Demo的脚手架采用create-react-app。  
-```
-npm install 
-npm start
-```
+请点击[这里](https://codesandbox.io/s/7308945zx1)
 
 # redux所修改的部分
 只使用且修改了`3.7.2版本redux`的`createStore.js`文件。  
