@@ -1,7 +1,7 @@
 {
   "name": "ramdux",
   "description": "ramdajs和redux的结合。打造更简单的前端数据流框架。",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "shanchao",
   "dependencies": {
     "ramda": "0.24.1"
